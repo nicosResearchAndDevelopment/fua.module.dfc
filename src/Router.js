@@ -4,7 +4,9 @@ module.exports = () => {
     async function Router(source, output = source, next) {
         for(let route of routes) {
             output = await new Promise((resolve, reject) => {
-                const next = (err, result) => err ? reject(err) : resolve(result);
+                const next = (err, result) => err
+                    ? reject(err)
+                    : resolve(typeof result === 'undefined' ? output : result);
                 route(source, output, next);
             });
         }
