@@ -27,13 +27,23 @@ function CSVTransformer(options = {}) {
             if (comments && rowStr.startsWith(comments)) continue;
             let row = [], valStrArr = rowStr.split(delimiter);
             for (let valIndex = 0; valIndex < valStrArr.length; valIndex++) {
-                const
-                    valStr = trim ? valStrArr[valIndex].trim() : valStrArr[valIndex],
-                    quoted = valStr.length >= 2 && valStr.startsWith(quote) && valStr.endsWith(quote);
-                row.push(quoted ? valStr.substr(1, valStr.length - 2) : valStr);
+                let quoted = false;
+                if (quote && valStrArr[valIndex].startsWith(quote)) {
+                    for (let endIndex = valIndex + 1; endIndex < valStrArr.length; endIndex++) {
+                        if (valStrArr[endIndex].endsWith(quote)) {
+                            const valStr        = valStrArr.slice(valIndex, endIndex + 1).join('');
+                            valStrArr[valIndex] = valStr.substr(1, valStr.length - 2);
+                            valStrArr.splice(valIndex + 1, endIndex - valIndex);
+                            quoted = true;
+                            break;
+                        }
+                    }
+                }
+                if (trim && !quoted) row.push(valStrArr[valIndex].trim());
+                else row.push(valStrArr[valIndex]);
             }
             if (rowSize === null) rowSize = row.length;
-            else if (rowSize !== row.length) return next(new Error(`expected ${rowIndex + 1}. row to have ${rowSize} entries'`));
+            else if (rowSize !== row.length) return next(new Error(`expected row (${rowIndex}) to have ${rowSize} entries, got ${row.length}'`));
             output.rows.push(row);
         }
         next();
