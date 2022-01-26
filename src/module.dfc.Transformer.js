@@ -3,7 +3,9 @@ const util = require('./module.dfc.util.js');
 function Transformer(id = '') {
     util.assert(util.isString(id), `Transformer : expected id to be a string`, TypeError);
 
-    const transformMethods = [];
+    let
+        transformMethods = [],
+        changeLocked     = false;
 
     async function transformer(source, output = source, next) {
         for (let method of transformMethods) {
@@ -16,13 +18,21 @@ function Transformer(id = '') {
     } // transformer
 
     function useMethod(...methods) {
+        util.assert(!changeLocked, `Transformer<${id}>.use : already locked`);
         util.assert(methods.every(util.isFunction), `Transformer<${id}>.use : expected method to be a function`, TypeError);
         transformMethods.push(...methods);
+        return transformer;
     } // useMethod
 
+    function lockChanges() {
+        changeLocked = true;
+        return transformer;
+    } // lockChanges
+
     Object.defineProperties(transformer, {
-        id:  {value: id},
-        use: {value: useMethod}
+        id:   {value: id},
+        use:  {value: useMethod},
+        lock: {value: lockChanges}
     });
 
     return transformer;

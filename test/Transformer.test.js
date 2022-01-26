@@ -25,8 +25,11 @@ describe('module.dfc.Transformer', function () {
             next(null, output);
         });
 
+        tf.lock();
+
         expect(await tf('test')).toBe('>>test<<');
         await expect(tf()).rejects.toThrow('empty');
+        expect(() => tf.use((source, output, next) => next())).toThrow();
 
     });
 
@@ -54,6 +57,8 @@ describe('module.dfc.Transformer', function () {
             if (source.hello) output.hello = 'world!';
             next(null, output);
         });
+
+        tf.lock();
 
         expect(await tf({test: 1})).toEqual({
             test2: 1
@@ -84,6 +89,8 @@ describe('module.dfc.Transformer', function () {
             }
             next();
         });
+
+        tf.lock();
 
         expect(await tf([1, 2, 3])).toEqual({
             i0: 1, i1: 2, i2: 3
