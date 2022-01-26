@@ -43,7 +43,7 @@ function CSVTransformer(options = {}) {
                 else row.push(valStrArr[valIndex]);
             }
             if (rowSize === null) rowSize = row.length;
-            else if (rowSize !== row.length) return next(new Error(`expected row (${rowIndex}) to have ${rowSize} entries, got ${row.length}'`));
+            else if (rowSize !== row.length) return next(new Error(`expected row #${rowIndex + 1} to have ${rowSize} entries, but got ${row.length}'`));
             output.rows.push(row);
         }
         next();
