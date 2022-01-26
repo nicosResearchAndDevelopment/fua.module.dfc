@@ -22,8 +22,10 @@ function CSVTransformer(options = {}) {
     transformer.use(function (source, output, next) {
         let rowStrArr = source.split(rowDelimiter), rowSize = null;
         for (let rowIndex = 0; rowIndex < rowStrArr.length; rowIndex++) {
-            if (comments && rowStrArr[rowIndex].startsWith(comments)) continue;
-            let row = [], valStrArr = rowStrArr[rowIndex].split(delimiter);
+            const rowStr = rowStrArr[rowIndex];
+            if (rowStr.length === 0) continue;
+            if (comments && rowStr.startsWith(comments)) continue;
+            let row = [], valStrArr = rowStr.split(delimiter);
             for (let valIndex = 0; valIndex < valStrArr.length; valIndex++) {
                 const
                     valStr = trim ? valStrArr[valIndex].trim() : valStrArr[valIndex],
