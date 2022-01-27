@@ -11,7 +11,8 @@ function CSVTransformer(options = {}) {
         rowDelimiter = options.rowDelimiter || '\r\n',
         quote        = options.quote || '"',
         comments     = options.comments || '',
-        trim         = !!(options.trim);
+        trim         = !!(options.trim),
+        stripBom     = !!(options.stripBom);
 
     transformer.use(function (source, output, next) {
         if (!util.isString(source))
@@ -20,6 +21,7 @@ function CSVTransformer(options = {}) {
     });
 
     transformer.use(function (source, output, next) {
+        if (stripBom) source = source.replace(/^\uFEFF/gm, '');
         let rowStrArr = source.split(rowDelimiter), rowSize = null;
         for (let rowIndex = 0; rowIndex < rowStrArr.length; rowIndex++) {
             const rowStr = rowStrArr[rowIndex];
