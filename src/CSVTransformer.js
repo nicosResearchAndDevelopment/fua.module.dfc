@@ -1,9 +1,8 @@
 const
-    util        = require('./module.dfc.util.js'),
-    Transformer = require('./module.dfc.Transformer.js');
+    is          = require('@nrd/fua.core.is'),
+    Transformer = require('./Transformer.js');
 
-function CSVTransformer(options = {}) {
-
+module.exports = function CSVTransformer(options = {}) {
     const
         transformer  = Transformer(options.id || ''),
         headers      = !!(options.headers),
@@ -15,7 +14,7 @@ function CSVTransformer(options = {}) {
         stripBom     = !!(options.stripBom);
 
     transformer.use(function (source, output, next) {
-        if (!util.isString(source))
+        if (!is.string(source))
             return next(new Error('expected input to be a string'));
         next(null, {header: null, rows: []});
     });
@@ -65,7 +64,4 @@ function CSVTransformer(options = {}) {
     });
 
     return transformer;
-
-} // CSVTransformer
-
-module.exports = CSVTransformer;
+}

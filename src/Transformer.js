@@ -1,7 +1,9 @@
-const util = require('./module.dfc.util.js');
+const
+    assert = require('@nrd/fua.core.assert'),
+    is     = require('@nrd/fua.core.is');
 
-function Transformer(id = '') {
-    util.assert(util.isString(id), `Transformer : expected id to be a string`, TypeError);
+module.exports = function Transformer(id = '') {
+    assert(is.string(id), `Transformer : expected id to be a string`, TypeError);
 
     let
         transformMethods = [],
@@ -10,16 +12,16 @@ function Transformer(id = '') {
     async function transformer(source, output = source, next) {
         for (let method of transformMethods) {
             output = await new Promise((resolve, reject) => {
-                const next = (err, result) => err ? reject(err) : resolve(util.isDefined(result) ? result : output);
+                const next = (err, result) => err ? reject(err) : resolve(is.defined(result) ? result : output);
                 method.call(transformer, source, output, next);
             });
         }
-        return util.isFunction(next) ? next(output) : output;
+        return is.function(next) ? next(output) : output;
     } // transformer
 
     function useMethod(...methods) {
-        util.assert(!changeLocked, `Transformer<${id}>.use : already locked`);
-        util.assert(methods.every(util.isFunction), `Transformer<${id}>.use : expected method to be a function`, TypeError);
+        assert(!changeLocked, `Transformer<${id}>.use : already locked`);
+        assert(methods.every(is.function), `Transformer<${id}>.use : expected method to be a function`, TypeError);
         transformMethods.push(...methods);
         return transformer;
     } // useMethod
@@ -36,7 +38,4 @@ function Transformer(id = '') {
     });
 
     return transformer;
-
-} // Transformer
-
-module.exports = Transformer;
+}

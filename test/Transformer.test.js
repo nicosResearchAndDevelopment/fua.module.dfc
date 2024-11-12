@@ -1,7 +1,7 @@
 const
     {describe, test} = require('mocha'),
     expect           = require('expect'),
-    dfc              = require('../src/module.dfc.js');
+    dfc              = require('../src/dfc.js');
 
 describe('module.dfc.Transformer', function () {
 
