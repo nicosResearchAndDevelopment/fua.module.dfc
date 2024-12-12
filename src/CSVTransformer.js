@@ -1,5 +1,5 @@
 const
-    is          = require('@nrd/fua.core.is'),
+    is          = require('@fua/core.is'),
     Transformer = require('./Transformer.js');
 
 module.exports = function CSVTransformer(options = {}) {
